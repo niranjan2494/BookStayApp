@@ -1,3 +1,6 @@
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * BookStayApp
  * Entry point of the BookStay Hotel Booking application.
@@ -6,80 +9,61 @@ public class BookStayApp {
 
     public static void main(String[] args) {
 
-        // Create room objects
-        Room single = new SingleRoom();
-        Room doubleRoom = new DoubleRoom();
-        Room suite = new SuiteRoom();
+        System.out.println("Welcome to BookStay Hotel Booking System\n");
 
-        // Availability variables
-        int singleAvailable = 5;
-        int doubleAvailable = 3;
-        int suiteAvailable = 2;
+        // Initialize inventory
+        RoomInventory inventory = new RoomInventory();
 
-        System.out.println("Welcome to BookStay");
-        System.out.println("Version 1.0\n");
+        // Display current inventory
+        inventory.displayInventory();
 
-        single.displayRoomDetails();
-        System.out.println("Available: " + singleAvailable);
-        System.out.println();
+        // Check availability
+        System.out.println("\nChecking availability for Single Room:");
+        System.out.println("Available: " + inventory.getAvailability("Single Room"));
 
-        doubleRoom.displayRoomDetails();
-        System.out.println("Available: " + doubleAvailable);
-        System.out.println();
+        // Update availability (example: booking a room)
+        System.out.println("\nBooking one Single Room...");
+        int current = inventory.getAvailability("Single Room");
+        inventory.updateAvailability("Single Room", current - 1);
 
-        suite.displayRoomDetails();
-        System.out.println("Available: " + suiteAvailable);
+        // Display updated inventory
+        System.out.println("\nUpdated Inventory:");
+        inventory.displayInventory();
     }
 }
 
 /**
- * Abstract class representing a room
+ * RoomInventory manages room availability using HashMap.
  */
-abstract class Room {
+class RoomInventory {
 
-    private String type;
-    private int beds;
-    private double price;
+    private HashMap<String, Integer> inventory;
 
-    public Room(String type, int beds, double price) {
-        this.type = type;
-        this.beds = beds;
-        this.price = price;
+    // Constructor initializes availability
+    public RoomInventory() {
+        inventory = new HashMap<>();
+
+        inventory.put("Single Room", 5);
+        inventory.put("Double Room", 3);
+        inventory.put("Suite Room", 2);
     }
 
-    public void displayRoomDetails() {
-        System.out.println("Room Type: " + type);
-        System.out.println("Beds: " + beds);
-        System.out.println("Price per night: $" + price);
+    // Get availability of a room type
+    public int getAvailability(String roomType) {
+        return inventory.getOrDefault(roomType, 0);
     }
-}
 
-/**
- * Single Room
- */
-class SingleRoom extends Room {
-
-    public SingleRoom() {
-        super("Single Room", 1, 80);
+    // Update availability
+    public void updateAvailability(String roomType, int count) {
+        inventory.put(roomType, count);
     }
-}
 
-/**
- * Double Room
- */
-class DoubleRoom extends Room {
+    // Display inventory
+    public void displayInventory() {
+        System.out.println("Current Room Inventory:");
 
-    public DoubleRoom() {
-        super("Double Room", 2, 120);
-    }
-}
-
-/**
- * Suite Room
- */
-class SuiteRoom extends Room {
-
-    public SuiteRoom() {
-        super("Suite Room", 3, 250);
+        for (Map.Entry<String, Integer> entry : inventory.entrySet()) {
+            System.out.println(entry.getKey() + " : " + entry.getValue() + " rooms available");
+        }
     }
 }
